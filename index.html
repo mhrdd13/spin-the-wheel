@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Spin the Wheel - Sign Up</title>
+  <style>
+    body {
+      background: #f8f8f8;
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      margin: 0;
+    }
+    h1 {
+      color: #333;
+    }
+    .form-container, .wheel-container {
+      background: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .form-container input {
+      width: 100%;
+      padding: 10px;
+      margin: 10px 0;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+    }
+    .form-container button {
+      width: 100%;
+      padding: 10px;
+      background-color: #28a745;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+    .wheel {
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      border: 10px solid #333;
+      position: relative;
+      overflow: hidden;
+      box-shadow: 0 0 20px rgba(0,0,0,0.2);
+    }
+    .wheel .segment {
+      width: 50%;
+      height: 50%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform-origin: 0% 0%;
+      background: #eee;
+      border: 1px solid #ddd;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: bold;
+      color: #333;
+    }
+    .spin-btn {
+      margin-top: 30px;
+      padding: 10px 30px;
+      background: #28a745;
+      color: white;
+      font-size: 16px;
+      border: none;
+      cursor: pointer;
+      border-radius: 5px;
+    }
+    .pointer {
+      position: absolute;
+      top: -20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 15px solid transparent;
+      border-right: 15px solid transparent;
+      border-bottom: 30px solid red;
+    }
+  </style>
+</head>
+<body>
+  <div class="form-container" id="form-container">
+    <h1>🎉 Spin to Win!</h1>
+    <p>Enter your details to spin the wheel and win exclusive offers!</p>
+    <input type="text" id="name" placeholder="Full Name" required>
+    <input type="tel" id="phone" placeholder="Phone Number" required>
+    <input type="email" id="email" placeholder="Email Address" required>
+    <input type="date" id="dob" placeholder="Birth Date" required>
+    <button onclick="submitForm()">Submit & Spin</button>
+  </div>
+
+  <div class="wheel-container" style="display:none; position: relative;" id="wheel-container">
+    <h1>🎯 Spin the Wheel!</h1>
+    <div class="pointer"></div>
+    <div class="wheel" id="wheel"></div>
+    <button class="spin-btn" onclick="spinWheel()">Spin!</button>
+  </div>
+
+  <script>
+    const prizes = [
+      '10% OFF',
+      'Free Drink',
+      '£5 Voucher',
+      'Try Again',
+      'Free Dessert',
+      '15% OFF',
+    ];
+
+    const wheel = document.getElementById('wheel');
+    const segmentAngle = 360 / prizes.length;
+
+    prizes.forEach((text, i) => {
+      const segment = document.createElement('div');
+      segment.className = 'segment';
+      segment.style.transform = `rotate(${i * segmentAngle}deg) skewY(-${90 - segmentAngle}deg)`;
+      segment.style.background = i % 2 === 0 ? '#ffcc00' : '#ff6600';
+      segment.innerHTML = `<div style="transform: skewY(${90 - segmentAngle}deg) rotate(${segmentAngle / 2}deg);">${text}</div>`;
+      wheel.appendChild(segment);
+    });
+
+    let spinning = false;
+
+    function submitForm() {
+      const name = document.getElementById('name').value;
+      const phone = document.getElementById('phone').value;
+      const email = document.getElementById('email').value;
+      const dob = document.getElementById('dob').value;
+
+      if (!name || !phone || !email || !dob) {
+        alert("Please fill in all fields");
+        return;
+      }
+
+      // Save to local storage (optional)
+      localStorage.setItem("user", JSON.stringify({ name, phone, email, dob }));
+
+      document.getElementById('form-container').style.display = 'none';
+      document.getElementById('wheel-container').style.display = 'block';
+    }
+
+    function spinWheel() {
+      if (spinning) return;
+      spinning = true;
+      const rand = Math.floor(Math.random() * prizes.length);
+      const rotateDeg = 360 * 5 + (360 - rand * segmentAngle - segmentAngle / 2);
+      wheel.style.transition = 'transform 4s ease-out';
+      wheel.style.transform = `rotate(${rotateDeg}deg)`;
+
+      setTimeout(() => {
+        alert('🎁 You won: ' + prizes[rand]);
+        spinning = false;
+      }, 4200);
+    }
+  </script>
+</body>
+</html>
